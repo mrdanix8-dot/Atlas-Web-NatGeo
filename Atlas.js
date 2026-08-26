@@ -65,8 +65,34 @@ const COUNTRIES = [
 const FAUNA = [
   { id:"f1", icon:"🦁", name:"León", continent:"África", habitat:"Sabana", diet:"Carnívoro", description:"Conocido como el 'Rey de la Selva', es un superdepredador emblemático.", type:"fauna",
     images: ["https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=800", "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=800"] },
-  { id:"f2", icon:"🐼", name:"Panda", continent:"Asia", habitat:"Bosques de bambú", diet:"Herbívoro", description:"Oso originario de China, famoso por su pelaje blanco y negro.", type:"fauna",
-    images: ["https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800"] }
+  { id:"f2", icon:"🐼", name:"Panda Gigante", continent:"Asia", habitat:"Bosques de bambú", diet:"Herbívoro", description:"Oso originario de China, famoso por su pelaje blanco y negro.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800"] },
+  { id:"f3", icon:"🦅", name:"Águila Calva", continent:"América", habitat:"Bosques y costas", diet:"Carnívoro", description:"Ave rapaz emblemática de Norteamérica, famosa por su agudísima visión.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1611689342806-0863700ce1e4?w=800"] },
+  { id:"f4", icon:"🦘", name:"Canguro Rojo", continent:"Oceanía", habitat:"Praderas y desiertos", diet:"Herbívoro", description:"El marsupial más grande del mundo, conocido por sus potentes saltos.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=800"] },
+  { id:"f5", icon:"🐧", name:"Pingüino Emperador", continent:"Antártida", habitat:"Hielo antártico", diet:"Carnívoro", description:"La especie de pingüino más grande, adaptada a temperaturas bajo cero.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1598439210625-5067c578f3f6?w=800"] },
+  { id:"f6", icon:"🐅", name:"Tigre de Bengala", continent:"Asia", habitat:"Selvas y manglares", diet:"Carnívoro", description:"Felino ágil y solitario con un patrón de rayas único en su pelaje.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=800"] },
+  { id:"f7", icon:"🐻‍❄️", name:"Oso Polar", continent:"América", habitat:"Tundra y hielo marino", diet:"Carnívoro", description:"El mayor depredador terrestre del Ártico y un nadador formidable.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=800"] },
+  { id:"f8", icon:"🐺", name:"Lobo Gris", continent:"Europa", habitat:"Bosques y montañas", diet:"Carnívoro", description:"Depredador social con un complejo sistema de comunicación en jauría.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800"] },
+  { id:"f9", icon:"🐆", name:"Jaguar", continent:"América", habitat:"Selvas tropicales", diet:"Carnívoro", description:"El felino más grande de América, famoso por la potencia de su mordida.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800"] },
+  { id:"f10", icon:"🐘", name:"Elefante Africano", continent:"África", habitat:"Sabanas y bosques", diet:"Herbívoro", description:"El animal terrestre más grande del mundo y de notable inteligencia.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=800"] },
+  { id:"f11", icon:"🐨", name:"Koala", continent:"Oceanía", habitat:"Bosques de eucalipto", diet:"Herbívoro", description:"Marsupial arborícola que pasa gran parte del día descansando.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1459257831348-f0cdd359235f?w=800"] },
+  { id:"f12", icon:"🦍", name:"Gorila de Montaña", continent:"África", habitat:"Bosques montañosos", diet:"Herbívoro", description:"Primate pacífico y robusto que vive en grupos familiares protegidos.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=800"] },
+  { id:"f13", icon:"🐪", name:"Camello Dromedario", continent:"África", habitat:"Desiertos cálidos", diet:"Herbívoro", description:"Especialista en supervivencia desértica gracias a la reserva de su joroba.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800"] },
+  { id:"f14", icon:"🦅", name:"Cóndor Andino", continent:"América", habitat:"Cordillera de los Andes", diet:"Carroñero", description:"Una de las aves voladoras de mayor envergadura y símbolo sudamericano.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1582845843447-0e2417a868f0?w=800"] },
+  { id:"f15", icon:"🦜", name:"Guacamaya Roja", continent:"América", habitat:"Selvas húmedas", diet:"Herbívoro", description:"Ave de plumaje colorido y brillante que habita en las copas del bosque.", type:"fauna",
+    images: ["https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800"] }
 ];
 
 const WONDERS = [
@@ -100,7 +126,6 @@ function showSection(id) {
     link.classList.toggle('active', link.getAttribute('data-section') === id);
   });
   
-  // Forzar a Leaflet a recalcular el tamaño en pantallas móviles
   if (id === 'map' && mapInstance) { 
     setTimeout(() => mapInstance.invalidateSize(), 100); 
     setTimeout(() => mapInstance.invalidateSize(), 400); 
@@ -123,13 +148,11 @@ function initMap() {
     marker.on('click', () => openPanel(c));
   });
 
-  // Solución al cuadro negro: recargar renderizado
   setTimeout(() => {
     if (mapInstance) mapInstance.invalidateSize();
   }, 300);
 }
 
-// Redimensionar automáticamente el mapa si el usuario gira el teléfono o cambia el tamaño
 window.addEventListener('resize', () => {
   if (mapInstance) mapInstance.invalidateSize();
 });
