@@ -49,7 +49,6 @@ function toggleMenu() {
   overlay.classList.toggle('show');
 }
 
-
 const COUNTRIES = [
   { id:"mx", icon:"🇲🇽", name:"México", continent:"América", capital:"Ciudad de México", population:"130M", area:"1.96M km²", history:"Cuna de civilizaciones como la Maya y Azteca.", culture:"Famoso por su gastronomía y el Día de Muertos.", lat:23.63, lng:-102.55, type:"country",
     images: ["https://images.unsplash.com/photo-1512813117056-119f2f5341c2?w=800", "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=800"] },
@@ -100,21 +99,40 @@ function showSection(id) {
   document.querySelectorAll('.nav-link').forEach(link => {
     link.classList.toggle('active', link.getAttribute('data-section') === id);
   });
-  if (id === 'map' && mapInstance) { setTimeout(() => mapInstance.invalidateSize(), 300); }
+  
+  // Forzar a Leaflet a recalcular el tamaño en pantallas móviles
+  if (id === 'map' && mapInstance) { 
+    setTimeout(() => mapInstance.invalidateSize(), 100); 
+    setTimeout(() => mapInstance.invalidateSize(), 400); 
+  }
   window.scrollTo(0, 0);
 }
 
 function initMap() {
   if (mapInstance) return;
+  
   mapInstance = L.map('map').setView([20, 0], 2);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(mapInstance);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    subdomains: 'abcd'
+  }).addTo(mapInstance);
 
   COUNTRIES.forEach(c => {
     const marker = L.circleMarker([c.lat, c.lng], { radius: 8, fillColor: '#FFCC00', color: '#000', weight: 2, fillOpacity: 0.9 }).addTo(mapInstance);
     marker.bindTooltip(`<b>${c.icon} ${c.name}</b>`, { direction: 'top' });
     marker.on('click', () => openPanel(c));
   });
+
+  // Solución al cuadro negro: recargar renderizado
+  setTimeout(() => {
+    if (mapInstance) mapInstance.invalidateSize();
+  }, 300);
 }
+
+// Redimensionar automáticamente el mapa si el usuario gira el teléfono o cambia el tamaño
+window.addEventListener('resize', () => {
+  if (mapInstance) mapInstance.invalidateSize();
+});
 
 function filterContinent(continent, btn) {
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -147,7 +165,6 @@ function buildGrid(list, containerId) {
   `).join('');
 }
 
-
 let currentSlide = 0;
 let totalSlides = 0;
 
@@ -155,19 +172,16 @@ function openPanel(data) {
   if (typeof data === 'string') data = ALL_DATA.find(x => x.id === data);
   if (!data) return;
 
-  // 1. Configurar Carrusel
   const track = document.getElementById('carousel-track');
   if (data.images && data.images.length > 0) {
     track.innerHTML = data.images.map(img => `<img src="${img}" class="carousel-slide" alt="Imagen">`).join('');
     totalSlides = data.images.length;
   } else {
-    // Imagen por defecto si no hay
     track.innerHTML = `<img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800" class="carousel-slide" alt="Default">`;
     totalSlides = 1;
   }
   currentSlide = 0;
   updateCarouselPosition();
-
 
   let html = `<div class="modal-title">${data.icon} ${data.name}</div><div class="modal-subtitle">${data.continent}</div>`;
   
@@ -206,7 +220,6 @@ function moveSlide(dir) {
 function updateCarouselPosition() {
   document.getElementById('carousel-track').style.transform = `translateX(-${currentSlide * 100}%)`;
 }
-
 
 function searchData(query) {
   const dd = document.getElementById('search-dropdown');
